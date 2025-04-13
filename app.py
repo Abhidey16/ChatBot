@@ -63,7 +63,7 @@ def main():
             "Temperature", 
             min_value=0.1, 
             max_value=1.5, 
-            value=0.5, 
+            value=0.9, 
             step=0.1,
             help="Higher values make output more random, lower values more deterministic"
         )
