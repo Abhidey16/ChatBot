@@ -140,4 +140,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
-Created by [Abhi Dey]
+Created by **Abhi Dey**
