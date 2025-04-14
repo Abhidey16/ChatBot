@@ -1,6 +1,7 @@
 import streamlit as st
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+import time  # Added time module
 
 st.set_page_config(
     page_title="DeepSeek Chat App",
@@ -22,6 +23,9 @@ def load_model():
     return tokenizer, model
 
 def generate_response(prompt, tokenizer, model, temperature, top_p):
+    # Start timing the response generation
+    start_time = time.time()
+    
     # Format the prompt for chat
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
@@ -45,8 +49,12 @@ def generate_response(prompt, tokenizer, model, temperature, top_p):
     # Clean response if needed
     if "</think>" in response:
         cleaned_response = response.split("</think>")[1]
-        return cleaned_response.strip()
-    return response
+        response = cleaned_response.strip()
+    
+    # Calculate elapsed time
+    elapsed_time = time.time() - start_time
+    
+    return response, elapsed_time
 
 def main():
     st.title("🤖 DeepSeek Chat Assistant")
@@ -63,7 +71,7 @@ def main():
             "Temperature", 
             min_value=0.1, 
             max_value=1.5, 
-            value=0.9, 
+            value=0.5, 
             step=0.1,
             help="Higher values make output more random, lower values more deterministic"
         )
@@ -85,6 +93,8 @@ def main():
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
+            if "time" in message and message["role"] == "assistant":
+                st.caption(f"Response time: {message['time']:.2f} seconds")
     
     # Load model (will use cached version after first load)
     with st.spinner("Loading model... (this may take a moment)"):
@@ -102,11 +112,12 @@ def main():
         # Display assistant response
         with st.chat_message("assistant"):
             with st.spinner("Thinking..."):
-                response = generate_response(prompt, tokenizer, model, temperature, top_p)
+                response, elapsed_time = generate_response(prompt, tokenizer, model, temperature, top_p)
                 st.markdown(response)
+                st.caption(f"Response time: {elapsed_time:.2f} seconds")
                 
         # Add assistant response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.session_state.messages.append({"role": "assistant", "content": response, "time": elapsed_time})
         
     # Add a button to clear chat history
     if st.button("Clear Chat History"):
