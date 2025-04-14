@@ -39,7 +39,7 @@ def generate_response(prompt, tokenizer, model, temperature, top_p):
         inputs.input_ids,
         attention_mask=inputs.attention_mask,
         pad_token_id=tokenizer.pad_token_id,
-        max_new_tokens=512,
+        max_new_tokens=1024,
         do_sample=True,
         top_p=top_p,
         temperature=temperature,
