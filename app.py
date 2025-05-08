@@ -21,7 +21,7 @@ def start_new_chat():
     st.session_state.chat_history = []
 
 # Title and description directly in the main area
-st.title("AI Text Generation")
+st.title("AI ChatBot")
 st.write("Generate creative text using AI models")
 
 # Function to load API keys from config file
